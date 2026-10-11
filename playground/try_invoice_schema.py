@@ -1,8 +1,7 @@
 import asyncio
 
 from app.config.settings import get_settings
-from app.prompts.invoice import INVOICE_SYSTEM_PROMPT, build_invoice_prompt
-from app.schemas.invoice import Invoice
+from app.services.invoice_service import InvoiceService
 from app.services.llm_client import LLMClient
 
 SAMPLE_INVOICE = """
@@ -29,11 +28,8 @@ Total Due                               EGP 4,126.80
 async def main() -> None:
     client = LLMClient(get_settings())
     try:
-        invoice = await client.extract(
-            prompt=build_invoice_prompt(SAMPLE_INVOICE),
-            schema=Invoice,
-            system=INVOICE_SYSTEM_PROMPT,
-        )
+        service = InvoiceService(client)
+        invoice = await service.extract(SAMPLE_INVOICE)
         print(invoice.model_dump_json(indent=2))
         print(type(invoice.invoice_date))
     finally:
