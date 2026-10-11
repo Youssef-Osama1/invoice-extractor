@@ -1,6 +1,7 @@
 import asyncio
 
 from app.config.settings import get_settings
+from app.prompts.invoice import INVOICE_SYSTEM_PROMPT, build_invoice_prompt
 from app.schemas.invoice import Invoice
 from app.services.llm_client import LLMClient
 
@@ -29,9 +30,9 @@ async def main() -> None:
     client = LLMClient(get_settings())
     try:
         invoice = await client.extract(
-            prompt=SAMPLE_INVOICE,
+            prompt=build_invoice_prompt(SAMPLE_INVOICE),
             schema=Invoice,
-            system="Extract the invoice data.",
+            system=INVOICE_SYSTEM_PROMPT,
         )
         print(invoice.model_dump_json(indent=2))
         print(type(invoice.invoice_date))
