@@ -1,6 +1,6 @@
-# AI Project Template
+# Invoice Extractor
 
-A production-ready Python starting point for LLM and AI backends.
+Extract structured data from invoices with an LLM.
 
 ## Quick Start
 
