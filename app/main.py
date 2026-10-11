@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 
 from app.api.router import api_router
 from app.config.settings import get_settings
-from app.core.exceptions import LLMOutputError
+from app.core.exceptions import LLMOutputError, NotAnInvoiceError
 from app.core.logger import setup_logging
 from app.services.llm_client import LLMClient
 
@@ -30,4 +30,14 @@ async def handle_llm_output_error(
 ) -> JSONResponse:
     return JSONResponse(
         status_code=status.HTTP_502_BAD_GATEWAY, content={"detail": str(error)}
+    )
+
+
+@app.exception_handler(NotAnInvoiceError)
+async def handle_not_an_invoice(
+    request: Request, error: NotAnInvoiceError
+) -> JSONResponse:
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+        content={"detail": str(error)},
     )

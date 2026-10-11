@@ -1,5 +1,6 @@
 import logging
 
+from app.core.exceptions import NotAnInvoiceError
 from app.prompts.invoice import INVOICE_SYSTEM_PROMPT, build_invoice_prompt
 from app.schemas.invoice import Invoice
 from app.services.llm_client import LLMClient
@@ -19,11 +20,13 @@ class InvoiceService:
             schema=Invoice,
             system=INVOICE_SYSTEM_PROMPT,
         )
+        if not invoice.is_invoice:
+            raise NotAnInvoiceError("The text does not look like an invoice")
         self._check_totals(invoice)
         return invoice
 
     def _check_totals(self, invoice: Invoice) -> None:
-        if invoice.subtotal is None or invoice.tax is None:
+        if invoice.subtotal is None or invoice.tax is None or invoice.total is None:
             return
 
         expected = invoice.subtotal + invoice.tax

@@ -13,6 +13,9 @@ class LineItem(BaseModel):
 
 
 class Invoice(BaseModel):
+    is_invoice: bool = Field(
+        description="False if the text is not an invoice or receipt"
+    )
     invoice_number: str | None = Field(
         description="Invoice identifier, null if not stated"
     )
@@ -20,7 +23,9 @@ class Invoice(BaseModel):
         description="Date the invoice was issued, null if not stated"
     )
     due_date: date | None = Field(description="Payment due date, null if not stated")
-    vendor_name: str = Field(description="Company or person that issued the invoice")
+    vendor_name: str | None = Field(
+        description="Company or person that issued the invoice, null if not stated"
+    )
     customer_name: str | None = Field(
         description="Company or person being billed, null if not stated"
     )
@@ -32,4 +37,6 @@ class Invoice(BaseModel):
     )
     subtotal: float | None = Field(description="Total before tax, null if not stated")
     tax: float | None = Field(description="Total tax amount, null if not stated")
-    total: float = Field(description="Final amount due as printed on the invoice")
+    total: float | None = Field(
+        description="Final amount due as printed on the invoice, null if not stated"
+    )
